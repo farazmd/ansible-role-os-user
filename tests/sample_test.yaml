@@ -1,0 +1,14 @@
+user_groups:
+  - group_name: test
+    state: present
+    system: false
+
+users:
+  - username: dusty
+    state: present
+    additional_groups: 
+      - test
+    create_home: true
+    is_system: false 
+    add_sudo: true
+    authorized_key: "random_public_key"

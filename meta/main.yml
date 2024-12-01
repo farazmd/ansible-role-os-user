@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: Mohammad Faraz
+  description: Role to create and manage OS users
+  company: tinkeringlab.io
+  license: Apache-2.0
+
+  min_ansible_version: 2.1
+  galaxy_tags: 
+    - linux
+    - users
+    - system
+    - account
+dependencies: []

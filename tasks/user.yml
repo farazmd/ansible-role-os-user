@@ -1,0 +1,39 @@
+# task for creating users
+
+- name: "task | Create User {{ user.username }}"
+  ansible.builtin.user:
+    name: "{{ user.username }}"
+    state: "{{ user.state | default('present') }}"
+    group: "{{ user.group | default(omit) }}"
+    groups: "{{ user.additional_groups | default(omit) }}"
+    append: "true"
+    create_home: "{{ user.create_home | default(false) }}"
+    shell: "{{ user.shell | default('/bin/bash') }}"
+    password: "{{ user.password | default('!') }}"
+    password_lock: "true"
+    update_password: "on_create"
+    system: "{{ user.is_system | default(false) }}"
+
+- name: "task | Manage sudoers {{ user.username }}"
+  ansible.builtin.template:
+    src: sudo.j2
+    dest: '/etc/sudoers.d/{{ user.username | replace(".", "dot") }}'
+    mode: "0640"
+    validate: /usr/sbin/visudo --check --file %s
+  when:
+    - user.add_sudo is defined and user.add_sudo | bool
+
+- name: "task | Remove {{ user.username }} from sudoers"
+  ansible.builtin.file:
+    path: '/etc/sudoers.d/{{ user.username | replace(".", "dot") }}'
+    state: absent
+  when:
+    - user.add_sudo is not defined or ( user.add_sudo is defined and not user.add_sudo | bool )
+
+- name: "task: Add authorized_keys for {{ user.username }}"
+  ansible.posix.authorized_key:
+    user: "{{ user.username }}"
+    state: present
+    key: "{{ user.authorized_key }}"
+  when:
+    - user.authorized_key is defined

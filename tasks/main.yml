@@ -1,0 +1,23 @@
+# tasks file for ansible-role-os-user
+- name: Create Group
+  ansible.builtin.group:
+    name: "{{ group.group_name }}"
+    gid: "{{ group.gid | default(omit) }}"
+    state: "{{ group.state | default('present') }}"
+    system: "{{ group.is_system | default(false) }}"
+  loop: "{{ user_groups }}"
+  loop_control:
+    loop_var: group
+    label: "{{ group.group_name }}"
+  when:
+    - user_groups is defined
+
+- name: Create User
+  ansible.builtin.include_tasks:
+    file: user.yml
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ user.username }}"
+    loop_var: user
+  when:
+    - users is defined

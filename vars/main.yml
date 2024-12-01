@@ -1,0 +1,3 @@
+# vars file for ansible-role-os-user
+user_groups: []
+users: []
